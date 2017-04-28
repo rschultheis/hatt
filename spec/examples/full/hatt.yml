@@ -1,0 +1,27 @@
+---
+#base configuration of services goes here
+hatt_services:
+  myapi:
+    url: 'https://my.api.com'
+  myotherapi:
+    url: 'https://my.other.api.net'
+
+hatt_environments:
+  qa:
+    hatt_services:
+      myapi:
+        url: 'http://qa.my.api.com'
+
+  dev:
+    hatt_services:
+      myapi:
+        url: 'http://dev.my.api.com'
+      myotherapi:
+        url: 'http://dev.my.other.api.net'
+
+  prod:
+    hatt_services:
+      myapi:
+        url: 'https://my.api.com'
+      myotherapi:
+        url: 'https://my.other.api.net'

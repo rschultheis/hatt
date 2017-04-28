@@ -1,0 +1,9 @@
+.rvmrc
+.bundle
+*.html
+Gemfile.lock
+oauth.yml
+*.gem
+.ruby-version
+doc
+.vscode
