@@ -27,7 +27,7 @@ module Hatt
     end
 
     def launch_pry_repl
-      require 'pry'
+      require 'pry';binding.pry
     end
   end
 end

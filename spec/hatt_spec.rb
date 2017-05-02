@@ -91,4 +91,11 @@ describe Hatt do
       rtn.should == 'return value'
     end
   end
+
+  describe '#new method' do
+    it 'should allow creating a new hatt instance' do
+      new_instance = Hatt.new config_file: FullExampleFile
+      expect(new_instance.respond_to?(:myapi)).to be true
+    end
+  end
 end

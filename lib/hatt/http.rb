@@ -3,6 +3,8 @@ require 'typhoeus'
 require 'typhoeus/adapters/faraday' # https://github.com/typhoeus/typhoeus/issues/226#issuecomment-9919517
 require 'active_support/notifications'
 
+require 'yaml'
+
 require_relative 'json_helpers'
 require_relative 'log'
 
@@ -20,7 +22,7 @@ module Hatt
 
       logger.debug "Configuring service:\n#{@config.to_hash.to_yaml}\n"
 
-      @conn = Faraday.new @config[:faraday_url] do |conn_builder|
+      @faraday_connection = Faraday.new @config[:faraday_url] do |conn_builder|
         # do our own logging
         # conn_builder.response logger: logger
         # conn_builder.adapter  Faraday.default_adapter  # make requests with Net::HTTP
@@ -50,7 +52,7 @@ module Hatt
 
     def stubs
       stubs = Faraday::Adapter::Test::Stubs.new
-      @conn = Faraday.new @config[:faraday_url] do |conn_builder|
+      @faraday_connection = Faraday.new @config[:faraday_url] do |conn_builder|
         conn_builder.adapter :test, stubs
       end
       stubs
@@ -58,7 +60,7 @@ module Hatt
 
     # allow stubbing http if we are testing
     attr_reader :http if defined?(RSpec)
-    attr_reader :name, :config, :conn
+    attr_reader :name, :config, :faraday_connection
     attr_accessor :headers # allows for doing some fancy stuff in threading
 
     # this is useful for testing apis, and other times
@@ -93,7 +95,7 @@ module Hatt
 
       # log the request
       logger.debug [
-        "Doing request: #{@name}: #{method.to_s.upcase} #{path}",
+        "Doing request: #{@name}: #{method.to_s.upcase} #{parsed.path}",
         @log_headers ? ['Request Headers:',
                         req_headers.map { |k, v| "#{k}: #{v.inspect}" }] : nil,
         @log_bodies ? ['Request Body:', body] : nil
@@ -101,9 +103,9 @@ module Hatt
 
       # doing it this way avoids problem with OPTIONS method: https://github.com/lostisland/faraday/issues/305
       response = nil
-      metrics_obj = { method: method, service: @name, path: path }
+      metrics_obj = { method: method, service: @name, path: parsed.path }
       ActiveSupport::Notifications.instrument('request.hatt', metrics_obj) do
-        response = @conn.run_request(method, nil, nil, nil) do |req|
+        response = @faraday_connection.run_request(method, nil, nil, nil) do |req|
           req.path = parsed.path
           req.params = metrics_obj[:params] = query_hash if query_hash
 
@@ -117,7 +119,8 @@ module Hatt
       logger.info "Request status: (#{response.status}) #{@name}: #{method.to_s.upcase} #{path}"
       @last_request = {
         method: method,
-        path: path,
+        path: parsed.path,
+        query: parsed.query,
         headers: req_headers,
         body: body
       }
@@ -140,15 +143,14 @@ module Hatt
     end
 
     def in_parallel(&blk)
-      @conn.headers = @headers
-      @conn.in_parallel &blk
+      @faraday_connection.headers = @headers
+      @faraday_connection.in_parallel &blk
     end
 
     # add base uri to request
-    def make_path(path_suffix, base_uri = nil)
-      base_uri_to_use = base_uri ? base_uri : @base_uri
-      if base_uri_to_use
-        base_uri_to_use + path_suffix
+    def make_path(path_suffix)
+      if @base_uri
+        @base_uri + path_suffix
       else
         path_suffix
       end
@@ -164,10 +166,6 @@ module Hatt
       end
       headers['content-type'] = 'application/x-www-form-urlencoded' if options[:form]
       headers
-    end
-
-    def req_args(path, options)
-      [make_path(path, options[:base_uri]), make_headers(options)]
     end
 
     def get(path, options = {})
@@ -200,17 +198,17 @@ module Hatt
 
     def post_form(path, params, options = {})
       do_request :post, path, params, options.merge(form: true)
-      # request_obj = Net::HTTP::Post.new(*req_args(path, options))
-      # request_obj.set_form_data params
-      # do_request request_obj, options
     end
   end
 
   class RequestException < RuntimeError
+    include Hatt::JsonHelpers
+
     def initialize(request, response)
       @request = request
       @response = response
     end
+    attr_reader :request, :response
 
     # this makes good info show up in rspec reports
     def to_s
@@ -223,7 +221,7 @@ module Hatt
     end
 
     def body
-      @response.body
+      objectify(@response.body)
     end
   end
 end

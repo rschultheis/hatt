@@ -30,6 +30,8 @@ describe Hatt::Mixin do
     it 'should have logging methods' do
       expect(subject.respond_to?(:debug)).to be true
       subject.debug 'testing a log message from a spec'
+      # hmm, not a great interface for changing log level
+      subject.level = :info
     end
 
     it 'should support the execution of script files' do

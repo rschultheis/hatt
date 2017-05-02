@@ -6,10 +6,6 @@ module Hatt
   class << self
     include Hatt::Mixin
 
-    def initialize(*args)
-      super(*args)
-    end
-
     def new(options = {})
       options = ActiveSupport::HashWithIndifferentAccess.new options
       hatt_instance = Class.new { include Hatt::Mixin }.new
