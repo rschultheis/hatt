@@ -70,4 +70,26 @@ describe Hatt do
       Hatt.a_hatt_method('x').should eql 'return value'
     end
   end
+
+  describe '#run_script_file' do
+    before(:each) do
+      Hatt.hatt_config_file FullExampleFile
+      Hatt.hatt_initialize
+    end
+
+    it 'should produce an exception if given non-existent file' do
+      expect { Hatt.run_script_file 'fake_file.rb' }.to raise_error(ArgumentError)
+    end
+
+    it 'should allow return what the script returns' do
+      rtn = Hatt.run_script_file 'spec/examples/full/hatt_scripts/simple_script.rb'
+      rtn.should == 42
+    end
+
+    it 'should allow a script to call hatt dsl methods' do
+      rtn = Hatt.run_script_file 'spec/examples/full/hatt_scripts/call_to_dsl_script.rb'
+      rtn.should == 'return value'
+    end
+
+  end
 end

@@ -18,9 +18,10 @@ gem 'pry'
 gem 'awesome_print'
 
 group :development do
+  gem 'debase'
   gem 'jeweler'
   gem 'rspec'
   gem 'rubocop'
   gem 'ruby-debug-ide'
-  gem 'debase'
+  gem 'simplecov'
 end

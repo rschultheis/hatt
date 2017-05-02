@@ -7,3 +7,4 @@ oauth.yml
 .ruby-version
 doc
 .vscode
+coverage

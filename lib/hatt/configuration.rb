@@ -62,7 +62,7 @@ module Hatt
         svc_cfg['name'] = svc
 
         unless svc_cfg.has_key? :url
-          raise ConfigurationError.new "url for service '#{svc_cfg['name']}' is not defined"
+          raise ConfigurationError.new "url for service '#{svc_cfg['name']}' is not defined"  
         end
 
         unless svc_cfg['url'] =~ URI::ABS_URI

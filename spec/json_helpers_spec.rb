@@ -66,6 +66,13 @@ describe Hatt::JsonHelpers do
       json_helper.objectify(obj).should eql obj
     end
 
+    it 'should return a hash or array as itself' do
+      obj = [123, 456]
+      json_helper.objectify(obj).should eql obj
+      obj = {abc: 123, def: 456}
+      json_helper.objectify(obj).should eql obj
+    end
+
     it 'should return a non-json string as itself' do
       str = 'abc;123'
       json_helper.objectify(str).should eql str

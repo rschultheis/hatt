@@ -1,7 +1,7 @@
 require_relative 'configuration'
 require_relative 'api_clients'
 require_relative 'dsl'
-require_relative 'blankslate'
+require_relative 'blankslateproxy'
 
 module Hatt
   module Mixin
@@ -24,9 +24,9 @@ module Hatt
 
     def run_script_file filename
       info "Running data script '#{filename}'"
-      raise "No such file '#{filename}'" unless File.exist? filename
+      raise(ArgumentError, "No such file '#{filename}'") unless File.exist? filename
       # by running in a anonymous class, we protect this class's namespace
-      anon_class = BlankSlate.new(self)
+      anon_class = BlankSlateProxy.new(self)
       with_local_load_path File.dirname(filename) do
         anon_class.instance_eval(IO.read(filename), filename, 1)
       end
@@ -36,7 +36,6 @@ module Hatt
       require 'pry'
       binding.pry
     end
-    
+
   end
 end
- 

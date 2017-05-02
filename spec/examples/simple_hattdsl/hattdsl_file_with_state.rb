@@ -15,3 +15,13 @@ end
 def increment_instance_var
   @instance_var += 100
 end
+
+SOME_HASH_STATE = {}
+
+def get_hash_state_value
+  SOME_HASH_STATE[:value] ||= 1000
+end
+
+def increment_hash_state_value
+  SOME_HASH_STATE[:value] += 1000
+end

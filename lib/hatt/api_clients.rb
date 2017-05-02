@@ -22,7 +22,7 @@ module Hatt
                 when Hash
                   url_or_svc_cfg_hash
                 else
-                  raise 'invalid call to create a hatt service'
+                  raise ArgumentError, "'#{url_or_svc_cfg_hash}' is not a url string nor hash with url key"
                 end
 
       init_config

@@ -1,8 +1,11 @@
 module Hatt
   # A simple 'blankslate' class which is used to avoid namespace polution
+  # Provides a proxy to a parent class, in order to allow access to other hatt methods like http service objects
+  #
   # TODO: Figure out if can/should use a BasicObject here.  I know it wont work right now
   # because the binding method of Object is needed and not in BasicObject
-  class BlankSlate < Object
+  #
+  class BlankSlateProxy < Object
     def initialize(parent)
       @parent = parent
     end

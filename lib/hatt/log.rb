@@ -23,11 +23,11 @@ module Hatt
     add_logger(STDOUT)
 
     def level= log_level
-      @@loggers.each { |logger| logger.level = log_level}
+      loggers.each { |logger| logger.level = log_level}
     end
 
     def log level, msg
-      @@loggers.each {|logger| logger.send(level, msg)}
+      loggers.each {|logger| logger.send(level, msg)}
     end
 
     [:fatal, :error, :warn, :info,:debug].each do |log_method|
