@@ -57,7 +57,7 @@ describe Hatt::DSL do
   describe 'managing state in hatts' do
     it 'will not allow flat lexical scoping within a hatt' do
       subject.hatt_load_hatt_file HattFileWithState
-      expect { subject.get_current_state}.to raise_error(NameError)
+      expect { subject.get_current_state }.to raise_error(NameError)
     end
 
     it 'should allow hatts to make and use instance variables' do
@@ -67,12 +67,11 @@ describe Hatt::DSL do
       subject.get_instance_var.should eql 200
     end
 
-    it "should allow hatts to make and use keys in a constant hash" do
+    it 'should allow hatts to make and use keys in a constant hash' do
       subject.hatt_load_hatt_file HattFileWithState
       subject.get_hash_state_value.should eql 1000
       subject.increment_hash_state_value
       subject.get_hash_state_value.should eql 2000
     end
-    
   end
 end

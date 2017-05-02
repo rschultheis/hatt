@@ -31,4 +31,3 @@ module Hatt
     end
   end
 end
-

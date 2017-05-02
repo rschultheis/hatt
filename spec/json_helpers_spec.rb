@@ -69,7 +69,7 @@ describe Hatt::JsonHelpers do
     it 'should return a hash or array as itself' do
       obj = [123, 456]
       json_helper.objectify(obj).should eql obj
-      obj = {abc: 123, def: 456}
+      obj = { abc: 123, def: 456 }
       json_helper.objectify(obj).should eql obj
     end
 

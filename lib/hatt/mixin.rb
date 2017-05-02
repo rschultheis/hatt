@@ -5,16 +5,10 @@ require_relative 'blankslateproxy'
 
 module Hatt
   module Mixin
-
-    include Hatt::Log
     include Hatt::Configuration
+    include Hatt::Log
     include Hatt::ApiClients
     include Hatt::DSL
-
-    def initialize(*opts)
-      hatt_initialize
-      super(*opts)
-    end
 
     def hatt_initialize
       hatt_build_client_methods
@@ -22,7 +16,7 @@ module Hatt
       self
     end
 
-    def run_script_file filename
+    def run_script_file(filename)
       info "Running data script '#{filename}'"
       raise(ArgumentError, "No such file '#{filename}'") unless File.exist? filename
       # by running in a anonymous class, we protect this class's namespace
@@ -34,8 +28,6 @@ module Hatt
 
     def launch_pry_repl
       require 'pry'
-      binding.pry
     end
-
   end
 end

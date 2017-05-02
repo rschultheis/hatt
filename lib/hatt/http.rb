@@ -8,12 +8,10 @@ require_relative 'log'
 
 module Hatt
   class HTTP
-
     include Hatt::Log
     include Hatt::JsonHelpers
 
-    def initialize config
-
+    def initialize(config)
       @config = config
       @name = @config[:name]
       @base_uri = @config[:base_uri]
@@ -26,7 +24,7 @@ module Hatt
         # do our own logging
         # conn_builder.response logger: logger
         # conn_builder.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-        conn_builder.adapter  @config.fetch(:adapter, :typhoeus).intern
+        conn_builder.adapter @config.fetch(:adapter, :typhoeus).intern
         conn_builder.ssl[:verify] = false if @config[:ignore_ssl_cert]
 
         # defaulting this to flat adapter avoids issues when duplicating parameters
@@ -38,10 +36,10 @@ module Hatt
 
       @headers = {
         'accept' => 'application/json',
-        'content-type' => 'application/json',
+        'content-type' => 'application/json'
       }
       if @config[:default_headers]
-        logger.debug "Default headers configured: " + @config[:default_headers].inspect
+        logger.debug 'Default headers configured: ' + @config[:default_headers].inspect
         @config[:default_headers].each_pair do |k, v|
           @headers[k.to_s] = v.to_s
         end
@@ -50,7 +48,7 @@ module Hatt
       logger.info "Initialized hatt service '#{@name}'"
     end
 
-    def stubs &blk
+    def stubs
       stubs = Faraday::Adapter::Test::Stubs.new
       @conn = Faraday.new @config[:faraday_url] do |conn_builder|
         conn_builder.adapter :test, stubs
@@ -61,20 +59,19 @@ module Hatt
     # allow stubbing http if we are testing
     attr_reader :http if defined?(RSpec)
     attr_reader :name, :config, :conn
-    attr_accessor :headers  #allows for doing some fancy stuff in threading
+    attr_accessor :headers # allows for doing some fancy stuff in threading
 
     # this is useful for testing apis, and other times
     # you want to interrogate the http details of a response
     attr_reader :last_request, :last_response
 
-    RequestLogSeperator = '-'*40
+    RequestLogSeperator = '-' * 40
 
     # do_request performs the actual request, and does associated logging
     # options can include:
     # - :timeout, which specifies num secs the request should timeout in
     #   (this turns out to be kind of annoying to implement)
-    def do_request method, path, obj=nil, options={}
-
+    def do_request(method, path, obj = nil, options = {})
       # hatt clients pass in path possibly including query params.
       # Faraday needs the query and path seperately.
       parsed = URI.parse make_path(path)
@@ -83,25 +80,23 @@ module Hatt
       query_hash = if parsed.query
                      cgi_hash = CGI.parse(parsed.query)
                      # make to account for one param having multiple values
-                     cgi_hash.inject({}) { |h,(k,v)| h[k] = v[1] ? v : v.first; h }
-                   else
-                     nil
+                     cgi_hash.each_with_object({}) { |(k, v), h| h[k] = v[1] ? v : v.first; }
                    end
 
       req_headers = make_headers(options)
 
       body = if options[:form]
-        URI.encode_www_form obj
-      else
-        jsonify(obj)
+               URI.encode_www_form obj
+             else
+               jsonify(obj)
       end
 
       # log the request
       logger.debug [
         "Doing request: #{@name}: #{method.to_s.upcase} #{path}",
-        @log_headers ? ["Request Headers:",
-        req_headers.map{ |k, v| "#{k}: #{v.inspect}" }] : nil,
-        @log_bodies ? ["Request Body:", body] : nil,
+        @log_headers ? ['Request Headers:',
+                        req_headers.map { |k, v| "#{k}: #{v.inspect}" }] : nil,
+        @log_bodies ? ['Request Body:', body] : nil
       ].flatten.compact.join("\n")
 
       # doing it this way avoids problem with OPTIONS method: https://github.com/lostisland/faraday/issues/305
@@ -124,33 +119,33 @@ module Hatt
         method: method,
         path: path,
         headers: req_headers,
-        body: body,
+        body: body
       }
       @last_response = response
 
       response_obj = objectify response.body
       if response.headers['content-type'] =~ /json/
         logger.debug [
-          "Response Details:",
-          @log_headers ? ["Response Headers:",
+          'Response Details:',
+          @log_headers ? ['Response Headers:',
                           response.headers.map { |k, v| "#{k}: #{v.inspect}" }] : nil,
-          @log_bodies ? [ "Response Body:", jsonify(response_obj)] : nil,
+          @log_bodies ? ['Response Body:', jsonify(response_obj)] : nil,
           ''
         ].flatten.compact.join("\n")
       end
 
-      raise RequestException.new(nil, response) unless response.status >= 200 and response.status < 300
+      raise RequestException.new(nil, response) unless response.status >= 200 && response.status < 300
 
-      return response_obj
+      response_obj
     end
 
-    def in_parallel &blk
+    def in_parallel(&blk)
       @conn.headers = @headers
       @conn.in_parallel &blk
     end
 
     # add base uri to request
-    def make_path path_suffix, base_uri=nil
+    def make_path(path_suffix, base_uri = nil)
       base_uri_to_use = base_uri ? base_uri : @base_uri
       if base_uri_to_use
         base_uri_to_use + path_suffix
@@ -159,51 +154,51 @@ module Hatt
       end
     end
 
-    def make_headers options
+    def make_headers(options)
       headers = if options[:additional_headers]
-        @headers.merge options[:additional_headers]
-      elsif options[:headers]
-        options[:headers]
-      else
-        @headers.clone
+                  @headers.merge options[:additional_headers]
+                elsif options[:headers]
+                  options[:headers]
+                else
+                  @headers.clone
       end
       headers['content-type'] = 'application/x-www-form-urlencoded' if options[:form]
       headers
     end
 
-    def req_args path, options
+    def req_args(path, options)
       [make_path(path, options[:base_uri]), make_headers(options)]
     end
 
-    def get path, options={}
+    def get(path, options = {})
       do_request :get, path, nil, options
     end
 
-    def head path, options={}
+    def head(path, options = {})
       do_request :head, path, nil, options
     end
 
-    def options path, options={}
+    def options(path, options = {})
       do_request :options, path, nil, options
     end
 
-    def delete path, options={}
+    def delete(path, options = {})
       do_request :delete, path, nil, options
     end
 
-    def post path, obj, options={}
+    def post(path, obj, options = {})
       do_request :post, path, obj, options
     end
 
-    def put path, obj, options={}
+    def put(path, obj, options = {})
       do_request :put, path, obj, options
     end
 
-    def patch path, obj, options={}
+    def patch(path, obj, options = {})
       do_request :patch, path, obj, options
     end
 
-    def post_form path, params, options={}
+    def post_form(path, params, options = {})
       do_request :post, path, params, options.merge(form: true)
       # request_obj = Net::HTTP::Post.new(*req_args(path, options))
       # request_obj.set_form_data params
@@ -211,14 +206,15 @@ module Hatt
     end
   end
 
-  class RequestException < Exception
+  class RequestException < RuntimeError
     def initialize(request, response)
-      @request, @response = request, response
+      @request = request
+      @response = response
     end
 
     # this makes good info show up in rspec reports
     def to_s
-      "#{self.class}\nResponseCode: #{self.code}\nResponseBody:\n#{self.body}"
+      "#{self.class}\nResponseCode: #{code}\nResponseBody:\n#{body}"
     end
 
     # shortcut methods
@@ -231,4 +227,3 @@ module Hatt
     end
   end
 end
-

@@ -10,7 +10,7 @@ module Hatt
       super(*args)
     end
 
-    def new options={}
+    def new(options = {})
       options = ActiveSupport::HashWithIndifferentAccess.new options
       hatt_instance = Class.new { include Hatt::Mixin }.new
       hatt_instance.hatt_config_file options.fetch(:config_file, 'hatt.yml')

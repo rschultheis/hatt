@@ -23,6 +23,9 @@ module TestConstants
   HattFileWithState = File.expand_path('../examples/simple_hattdsl/hattdsl_file_with_state.rb', __FILE__)
 
   SampleHattGlob = 'spec/examples/sample_hattdsl_collection/**/*_hattdsl.rb'.freeze
+
+  SimpleHattScript = 'spec/examples/full/hatt_scripts/simple_script.rb'.freeze
+  DSLCallHattScript = 'spec/examples/full/hatt_scripts/call_to_dsl_script.rb'.freeze
 end
 include TestConstants
 

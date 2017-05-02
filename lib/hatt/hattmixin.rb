@@ -4,7 +4,6 @@ require_relative 'dsl'
 
 module Hatt
   module HattMixin
-
     include Hatt::Configuration
     include Hatt::DSL
     include Hatt::ApiClients
@@ -18,6 +17,5 @@ module Hatt
       hatt_build_client_methods
       load_hatts_using_configuration
     end
-
   end
 end

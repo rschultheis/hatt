@@ -82,14 +82,13 @@ describe Hatt do
     end
 
     it 'should allow return what the script returns' do
-      rtn = Hatt.run_script_file 'spec/examples/full/hatt_scripts/simple_script.rb'
+      rtn = Hatt.run_script_file SimpleHattScript
       rtn.should == 42
     end
 
     it 'should allow a script to call hatt dsl methods' do
-      rtn = Hatt.run_script_file 'spec/examples/full/hatt_scripts/call_to_dsl_script.rb'
+      rtn = Hatt.run_script_file DSLCallHattScript
       rtn.should == 'return value'
     end
-
   end
 end

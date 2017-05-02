@@ -2,11 +2,10 @@ require 'json'
 
 module Hatt
   module JsonHelpers
-
     # always returns a string, intended for request bodies
     # every attempt is made to ensure string is valid json
     # but if that is not possible, then its returned as is
-    def jsonify obj
+    def jsonify(obj)
       case obj
       when String
         JSON.pretty_generate(JSON.parse(obj))
@@ -20,8 +19,8 @@ module Hatt
     end
 
     # attempts to parse json strings into native ruby objects
-    def objectify json_string
-      return nil if json_string.nil? or json_string==''
+    def objectify(json_string)
+      return nil if json_string.nil? || json_string == ''
       case json_string
       when Hash, Array
         return json_string
@@ -31,6 +30,5 @@ module Hatt
     rescue Exception
       json_string
     end
-
   end
 end

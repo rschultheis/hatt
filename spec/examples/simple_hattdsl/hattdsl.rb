@@ -1,3 +1,3 @@
-def gmethod *args
+def gmethod(*_args)
   'gmethod returned this'
 end
