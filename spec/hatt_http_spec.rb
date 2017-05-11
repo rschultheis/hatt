@@ -2,10 +2,6 @@ require 'hatt/http'
 require 'faraday/adapter/test'
 
 describe Hatt::HTTP do
-  before(:each) do
-    # require 'pry';binding.pry
-    subject.logger.level = Logger::DEBUG
-  end
 
   let(:test_configuration) do
     {
