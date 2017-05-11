@@ -12,25 +12,28 @@ module Hatt
       @hatt_configuration.tcfg
     end
 
-    def hatt_config_file(filename)
+    def hatt_config_file=(filename)
       @hatt_config_file = filename
       init_config
       self
     end
+    alias hatt_config_file hatt_config_file=
 
     private
 
     def hatt_config_file_path
-      if @hatt_config_file
+      if instance_variable_defined? :@hatt_config_file and not @hatt_config_file.nil?
         File.expand_path @hatt_config_file
       elsif File.exist? DEFAULT_CONFIG_FILE
         File.expand_path DEFAULT_CONFIG_FILE
+      else
+        nil
       end
     end
 
     # ensure the configuration is resolved and ready to use
     def init_config
-      unless @hatt_configuration
+      unless instance_variable_defined? :@hatt_configuration
         @hatt_configuration = TCFG::Base.new
 
         # build up some default configuration
