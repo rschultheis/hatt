@@ -67,7 +67,10 @@ module Hatt
     # you want to interrogate the http details of a response
     attr_reader :last_request, :last_response
 
-    RequestLogSeperator = '-' * 40
+    def in_parallel(&blk)
+      @faraday_connection.headers = @headers
+      @faraday_connection.in_parallel(&blk)
+    end
 
     # do_request performs the actual request, and does associated logging
     # options can include:
@@ -76,12 +79,12 @@ module Hatt
     def do_request(method, path, obj = nil, options = {})
       # hatt clients pass in path possibly including query params.
       # Faraday needs the query and path seperately.
-      parsed = URI.parse make_path(path)
+      parsed_uri = URI.parse make_path(path)
       # faraday needs the request params as a hash.
       # this turns out to be non-trivial
-      query_hash = if parsed.query
-                     cgi_hash = CGI.parse(parsed.query)
-                     # make to account for one param having multiple values
+      query_hash = if parsed_uri.query
+                     cgi_hash = CGI.parse(parsed_uri.query)
+                     # this next line accounts for one param having multiple values
                      cgi_hash.each_with_object({}) { |(k, v), h| h[k] = v[1] ? v : v.first; }
                    end
 
@@ -93,20 +96,15 @@ module Hatt
                jsonify(obj)
       end
 
-      # log the request
-      logger.debug [
-        "Doing request: #{@name}: #{method.to_s.upcase} #{parsed.path}",
-        @log_headers ? ['Request Headers:',
-                        req_headers.map { |k, v| "#{k}: #{v.inspect}" }] : nil,
-        @log_bodies ? ['Request Body:', body] : nil
-      ].flatten.compact.join("\n")
+
+      log_request(method, parsed_uri, query_hash, headers, body)
 
       # doing it this way avoids problem with OPTIONS method: https://github.com/lostisland/faraday/issues/305
       response = nil
-      metrics_obj = { method: method, service: @name, path: parsed.path }
+      metrics_obj = { method: method, service: @name, path: parsed_uri.path }
       ActiveSupport::Notifications.instrument('request.hatt', metrics_obj) do
         response = @faraday_connection.run_request(method, nil, nil, nil) do |req|
-          req.path = parsed.path
+          req.path = parsed_uri.path
           req.params = metrics_obj[:params] = query_hash if query_hash
 
           req.headers = req_headers
@@ -119,53 +117,20 @@ module Hatt
       logger.info "Request status: (#{response.status}) #{@name}: #{method.to_s.upcase} #{path}"
       @last_request = {
         method: method,
-        path: parsed.path,
-        query: parsed.query,
+        path: parsed_uri.path,
+        query: parsed_uri.query,
         headers: req_headers,
         body: body
       }
       @last_response = response
 
       response_obj = objectify response.body
-      if response.headers['content-type'] =~ /json/
-        logger.debug [
-          'Response Details:',
-          @log_headers ? ['Response Headers:',
-                          response.headers.map { |k, v| "#{k}: #{v.inspect}" }] : nil,
-          @log_bodies ? ['Response Body:', jsonify(response_obj)] : nil,
-          ''
-        ].flatten.compact.join("\n")
-      end
+
+      log_response(response, response_obj)
 
       raise RequestException.new(nil, response) unless response.status >= 200 && response.status < 300
 
       response_obj
-    end
-
-    def in_parallel(&blk)
-      @faraday_connection.headers = @headers
-      @faraday_connection.in_parallel &blk
-    end
-
-    # add base uri to request
-    def make_path(path_suffix)
-      if @base_uri
-        @base_uri + path_suffix
-      else
-        path_suffix
-      end
-    end
-
-    def make_headers(options)
-      headers = if options[:additional_headers]
-                  @headers.merge options[:additional_headers]
-                elsif options[:headers]
-                  options[:headers]
-                else
-                  @headers.clone
-      end
-      headers['content-type'] = 'application/x-www-form-urlencoded' if options[:form]
-      headers
     end
 
     def get(path, options = {})
@@ -199,6 +164,57 @@ module Hatt
     def post_form(path, params, options = {})
       do_request :post, path, params, options.merge(form: true)
     end
+
+    # convenience method for accessing the last response status code
+    def last_response_status
+      @last_response.status
+    end
+
+    private
+
+    # add base uri to request
+    def make_path(path_suffix)
+      if @base_uri
+        @base_uri + path_suffix
+      else
+        path_suffix
+      end
+    end
+
+    def make_headers(options)
+      headers = if options[:additional_headers]
+                  @headers.merge options[:additional_headers]
+                elsif options[:headers]
+                  options[:headers]
+                else
+                  @headers.clone
+      end
+      headers['content-type'] = 'application/x-www-form-urlencoded' if options[:form]
+      headers
+    end
+
+    def log_request(method, parsed_uri, query_hash={}, headers, body)
+      # log the request
+      logger.debug [
+        "Doing request: #{@name}: #{method.to_s.upcase} #{parsed_uri.path}?#{query_hash.is_a?(Hash) ? URI.encode_www_form(query_hash) : ''}",
+        @log_headers ? ['Request Headers:',
+                        headers.map { |k, v| "#{k}: #{v.inspect}" }] : nil,
+        @log_bodies ? ['Request Body:', body] : nil
+      ].flatten.compact.join("\n")
+    end
+
+    def log_response(response, response_obj)
+      if response.headers['content-type'] =~ /json/
+        logger.debug [
+          'Response Details:',
+          @log_headers ? ['Response Headers:',
+                          response.headers.map { |k, v| "#{k}: #{v.inspect}" }] : nil,
+          @log_bodies ? ['Response Body:', jsonify(response_obj)] : nil,
+          ''
+        ].flatten.compact.join("\n")
+      end
+    end
+
   end
 
   class RequestException < RuntimeError
