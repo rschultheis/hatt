@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Robert Schultheis"]
-  s.date = "2017-04-28"
+  s.date = "2017-05-11"
   s.description = "convention based approach to interfacing with an HTTP JSON API."
   s.email = "rob@knewton.com"
   s.executables = ["hatt"]
@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
     "lib/hatt.rb",
     "lib/hatt/api_clients.rb",
     "lib/hatt/base.rb",
-    "lib/hatt/blankslate.rb",
+    "lib/hatt/blankslateproxy.rb",
     "lib/hatt/configuration.rb",
     "lib/hatt/dsl.rb",
     "lib/hatt/hattmixin.rb",
@@ -50,42 +50,45 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<activesupport>, [">= 0"])
       s.add_runtime_dependency(%q<faraday>, [">= 0"])
       s.add_runtime_dependency(%q<multi_json>, [">= 0"])
-      s.add_runtime_dependency(%q<tcfg>, ["~> 0.2.0"])
+      s.add_runtime_dependency(%q<tcfg>, ["~> 0.2.2"])
       s.add_runtime_dependency(%q<typhoeus>, [">= 0"])
       s.add_runtime_dependency(%q<pry>, [">= 0"])
       s.add_runtime_dependency(%q<awesome_print>, [">= 0"])
+      s.add_development_dependency(%q<debase>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_development_dependency(%q<rubocop>, [">= 0"])
       s.add_development_dependency(%q<ruby-debug-ide>, [">= 0"])
-      s.add_development_dependency(%q<debase>, [">= 0"])
+      s.add_development_dependency(%q<simplecov>, [">= 0"])
     else
       s.add_dependency(%q<activesupport>, [">= 0"])
       s.add_dependency(%q<faraday>, [">= 0"])
       s.add_dependency(%q<multi_json>, [">= 0"])
-      s.add_dependency(%q<tcfg>, ["~> 0.2.0"])
+      s.add_dependency(%q<tcfg>, ["~> 0.2.2"])
       s.add_dependency(%q<typhoeus>, [">= 0"])
       s.add_dependency(%q<pry>, [">= 0"])
       s.add_dependency(%q<awesome_print>, [">= 0"])
+      s.add_dependency(%q<debase>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<rubocop>, [">= 0"])
       s.add_dependency(%q<ruby-debug-ide>, [">= 0"])
-      s.add_dependency(%q<debase>, [">= 0"])
+      s.add_dependency(%q<simplecov>, [">= 0"])
     end
   else
     s.add_dependency(%q<activesupport>, [">= 0"])
     s.add_dependency(%q<faraday>, [">= 0"])
     s.add_dependency(%q<multi_json>, [">= 0"])
-    s.add_dependency(%q<tcfg>, ["~> 0.2.0"])
+    s.add_dependency(%q<tcfg>, ["~> 0.2.2"])
     s.add_dependency(%q<typhoeus>, [">= 0"])
     s.add_dependency(%q<pry>, [">= 0"])
     s.add_dependency(%q<awesome_print>, [">= 0"])
+    s.add_dependency(%q<debase>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<rubocop>, [">= 0"])
     s.add_dependency(%q<ruby-debug-ide>, [">= 0"])
-    s.add_dependency(%q<debase>, [">= 0"])
+    s.add_dependency(%q<simplecov>, [">= 0"])
   end
 end
 

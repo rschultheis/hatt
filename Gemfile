@@ -8,7 +8,7 @@ gem 'faraday'
 # when will json gem go into the standard lib anyways?
 gem 'multi_json'
 # tcfg provides the basis for configuration (hatt.yml) and environments (qa/production/etc)
-gem 'tcfg', '~> 0.2.0'
+gem 'tcfg', '~> 0.2.2'
 # typhoes faraday adapter is the default for making http requests
 # provides a useful mechanism for making concurrent requests as well
 gem 'typhoeus'
