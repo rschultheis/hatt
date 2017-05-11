@@ -42,7 +42,10 @@ def parse_cmd_line
             'config filename') { |fn| options[:config_file] = fn }
 
     opts.on('-e', '--environment=ENVIRONMENT',
-            'environment name') { |e| options[:environment] = e.to_sym }
+            'environment name') do |e|
+              # a bit unfortunate this has to be passed by env var, but it works
+              ENV['HATT_ENVIRONMENT'] = e
+            end
 
     opts.on('-n', '--no-authenticate',
             'Do not authenticate') { options[:authenticate] = false }
