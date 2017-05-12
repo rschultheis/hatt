@@ -15,11 +15,11 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "hatt"
-  gem.homepage = "http://github.com/knewton/hatt"
+  gem.homepage = "http://github.com/rschultheis/hatt"
   gem.license = "MIT"
   gem.summary = %Q{Make calls to HTTP JSON APIs with ease and confidence}
   gem.description = %Q{convention based approach to interfacing with an HTTP JSON API.}
-  gem.email = "rob@knewton.com"
+  gem.email = "robert.schultheis@gmail.com"
   gem.authors = ["Robert Schultheis"]
   gem.files = [
     'lib/**/*',

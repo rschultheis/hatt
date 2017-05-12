@@ -11,9 +11,9 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Robert Schultheis"]
-  s.date = "2017-05-11"
+  s.date = "2017-05-12"
   s.description = "convention based approach to interfacing with an HTTP JSON API."
-  s.email = "rob@knewton.com"
+  s.email = "robert.schultheis@gmail.com"
   s.executables = ["hatt"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
     "lib/hatt/mixin.rb",
     "lib/hatt/singleton_mixin.rb"
   ]
-  s.homepage = "http://github.com/knewton/hatt"
+  s.homepage = "http://github.com/rschultheis/hatt"
   s.licenses = ["MIT"]
   s.rubygems_version = "2.5.1"
   s.summary = "Make calls to HTTP JSON APIs with ease and confidence"

@@ -104,7 +104,7 @@ Setup spec/weather_spec.rb with contents like:
       it "should know the weather for New York City" do
         response = weather_for 'New York, NY'
         expected_items = ['temp', 'temp_min', 'temp_max', 'humidity', 'pressure']
-        response['main'].keys.should include(*expected_items) 
+        response['main'].keys.should include(*expected_items)
       end
     end
 
@@ -118,12 +118,3 @@ And get back:
     1 example, 0 failures
 
 
-Further Information
--------------------
-
-Checkout out the [Wiki](https://github.com/Knewton/hatt/wiki) for info on configuration, authentication, and more.
-
-
-Copyright
----------
-Copyright (c) 2013 Knewton. See LICENSE.txt for further details.
