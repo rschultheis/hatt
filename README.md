@@ -1,4 +1,4 @@
-= HATT (HTTP API Testing Tool)
+# HATT (HTTP API Testing Tool)
 
 HATT is a tool, and a pattern, for testing HTTP APIs (RESTful or otherwise).  It can be used to
 construct fully automated tests, and also provides support for simple manual testing.
@@ -7,7 +7,7 @@ HATT is a Ruby tool and gem.  It leverages the full power of Ruby.  That said, H
 with little familiarity of Ruby, but some knowledge of scripting languages in general.  HATT works with standard
 Ruby testing frameworks like RSpec and MiniTest.
 
-== Basic testing features
+## Basic testing features
 
 * Easily configure and interact with one or more HTTP services (RESTful services).
 * "Point" tests and requests at various deployment environments (eg, QA, Staging, Production)
@@ -18,7 +18,7 @@ Ruby testing frameworks like RSpec and MiniTest.
   your tests can run on a central server where all team members can access them.
 
 
-== Short Example
+## Short Example
 
 The code for this entire example lives at [https://github.com/rschultheis/hatt_example].
 Looking through that project shows examples of using nearly every hatt feature,
@@ -27,36 +27,36 @@ and examples of many kinds of tests and assertions against APIs.
 This example is based on a free API: OpenWeatherMap.  While the API is free, one must sign-up for an API key here:
 [http://openweathermap.org/appid].  Keep your API key handy you will need it soon...
 
-=== Configure HATT, and setup a simple DSL method
+### Configure HATT, and setup a simple DSL method
 
-==== install hatt
+#### install hatt
 
     gem install hatt
 
-==== make a project directory
+#### make a project directory
 
     mkdir open_weather_map_api_test_suite
     cd open_weather_map_api_test_suite
 
-==== Make a file called 'hatt.yml' with these contents:
+#### Make a file called 'hatt.yml' with these contents:
 
     hatt_services:
       # shothand of owm for "open weather map api"
       owm:
         url: http://api.openweathermap.org
 
-==== Put our API key into hatt.secret.yml
+#### Put our API key into hatt.secret.yml
 
 We need a special place to put our API key. For that make a file called hatt.secret.yml.  This is a file that is generally not to be checked into source control, it should be used for configuring any secrets (like API keys or passwords). Put this one line into the file:
 
     owm_app_id: <your api key here>
 
-==== make the hattdsl directory, and a hattdsl file
+#### make the hattdsl directory, and a hattdsl file
 
     mkdir hattdsl
     touch hattdsl/open_weather_map_hattdsl.rb
 
-==== add method for checking weather to owm_hatts/weather.rb
+#### add method for checking weather to owm_hatts/weather.rb
 
     def weather_for city
       owm.get "/data/2.5/weather?q=#{URI.encode(city)}&APPID=#{appid}"
@@ -66,7 +66,7 @@ We need a special place to put our API key. For that make a file called hatt.sec
       hatt_configuration['owm_app_id']
     end
 
-==== Call it from the cmd line:
+#### Call it from the cmd line:
 
     hatt -v weather_for "Pleasantville, NY"
 
@@ -81,9 +81,9 @@ So, at this point we are able to call the API, and see the full details of the r
 test a lot at this point.  But HATT can do more....
 
 
-=== Make a ruby script, that uses the hattdsl:
+### Make a ruby script, that uses the hattdsl:
 
-==== Make a file called temperatures.rb with this in it:
+#### Make a file called temperatures.rb with this in it:
 
     [
       'New York, NY',
@@ -98,7 +98,7 @@ test a lot at this point.  But HATT can do more....
       puts "#{city}: #{celcius} celcius"
     end
 
-==== And then run the hatt script like so:
+#### And then run the hatt script like so:
 
     hatt -q -f temperatures.rb
 
@@ -111,19 +111,19 @@ And get this nice output (-q supresses all the detailed request/response logging
     Sydney, Australia: 14 celcius
 
 
-=== Make an automated test
+### Make an automated test
 
 Using the included Hatt::Mixin and Hatt::SingletonMixin module, testing an api becomes easy.  Lets setup a simple RSpec example here.
 
-==== Install rspec:
+#### Install rspec:
 
     gem install rspec
 
-==== Create the spec folder:
+#### Create the spec folder:
 
     mkdir spec
 
-==== Setup spec/spec_helper.rb with these contents to :
+#### Setup spec/spec_helper.rb with these contents to :
 
     require 'hatt'
 
@@ -136,7 +136,7 @@ Using the included Hatt::Mixin and Hatt::SingletonMixin module, testing an api b
       end
     end
 
-==== Setup spec/weather_spec.rb with contents like:
+#### Setup spec/weather_spec.rb with contents like:
 
     require 'spec_helper'
     describe "getting weather reports" do
@@ -150,7 +150,7 @@ Using the included Hatt::Mixin and Hatt::SingletonMixin module, testing an api b
       end
     end
 
-==== Run it:
+#### Run it:
 
     rspec
 

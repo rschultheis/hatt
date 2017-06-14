@@ -48,3 +48,12 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
+
+# rake readme converts README.rdoc (for rdoc) into README.md (for github)
+require 'rdoc2md'
+task :readme do
+  readme = File.open("README.rdoc").read
+  File.open('README.md', 'w') do |file|
+    file.write(Rdoc2md::Document.new(readme).to_md)
+  end
+end

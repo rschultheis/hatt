@@ -24,4 +24,5 @@ group :development do
   gem 'rubocop'
   gem 'ruby-debug-ide'
   gem 'simplecov'
+  gem 'rdoc2md'
 end

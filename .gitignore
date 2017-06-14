@@ -6,5 +6,6 @@ oauth.yml
 *.gem
 .ruby-version
 doc
+rdoc
 .vscode
 coverage
