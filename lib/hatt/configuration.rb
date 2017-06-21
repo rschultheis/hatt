@@ -5,7 +5,7 @@ require 'tcfg/tcfg_base'
 module Hatt
   module Configuration
     DEFAULT_CONFIG_FILE = 'hatt.yml'.freeze
-    DEFAULT_HATT_GLOBS = ['*_hattdsl/*_hattdsl.rb'].freeze
+    DEFAULT_HATT_GLOBS = ['*hattdsl/*hattdsl.rb'].freeze
 
     def hatt_configuration
       init_config

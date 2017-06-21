@@ -15,7 +15,7 @@ describe Hatt::Configuration do
 
   context 'hatt.yml is not in current working directory' do
     it 'should return a blank configuration, with an empty services hash default hatt globs and nil for hatt_config_file' do
-      subject.hatt_configuration.should == { 'hatt_services' => {}, 'hatt_globs' => ['*_hattdsl/*_hattdsl.rb'], 'hatt_config_file' => nil }
+      subject.hatt_configuration.should == { 'hatt_services' => {}, 'hatt_globs' => ['*hattdsl/*hattdsl.rb'], 'hatt_config_file' => nil }
     end
   end
 
