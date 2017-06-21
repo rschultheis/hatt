@@ -11,12 +11,13 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Robert Schultheis"]
-  s.date = "2017-05-12"
+  s.date = "2017-06-21"
   s.description = "convention based approach to interfacing with an HTTP JSON API."
   s.email = "robert.schultheis@gmail.com"
   s.executables = ["hatt"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
+    "README.md",
     "README.rdoc"
   ]
   s.files = [
@@ -31,7 +32,6 @@ Gem::Specification.new do |s|
     "lib/hatt/blankslateproxy.rb",
     "lib/hatt/configuration.rb",
     "lib/hatt/dsl.rb",
-    "lib/hatt/hattmixin.rb",
     "lib/hatt/http.rb",
     "lib/hatt/json_helpers.rb",
     "lib/hatt/log.rb",
@@ -60,6 +60,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rubocop>, [">= 0"])
       s.add_development_dependency(%q<ruby-debug-ide>, [">= 0"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
+      s.add_development_dependency(%q<rdoc2md>, [">= 0"])
     else
       s.add_dependency(%q<activesupport>, [">= 0"])
       s.add_dependency(%q<faraday>, [">= 0"])
@@ -74,6 +75,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rubocop>, [">= 0"])
       s.add_dependency(%q<ruby-debug-ide>, [">= 0"])
       s.add_dependency(%q<simplecov>, [">= 0"])
+      s.add_dependency(%q<rdoc2md>, [">= 0"])
     end
   else
     s.add_dependency(%q<activesupport>, [">= 0"])
@@ -89,6 +91,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rubocop>, [">= 0"])
     s.add_dependency(%q<ruby-debug-ide>, [">= 0"])
     s.add_dependency(%q<simplecov>, [">= 0"])
+    s.add_dependency(%q<rdoc2md>, [">= 0"])
   end
 end
 
