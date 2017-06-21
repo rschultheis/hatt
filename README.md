@@ -51,12 +51,11 @@ We need a special place to put our API key. For that make a file called hatt.sec
 
     owm_app_id: <your api key here>
 
-#### make the hattdsl directory, and a hattdsl file
+#### make the hattdsl directory:
 
     mkdir hattdsl
-    touch hattdsl/open_weather_map_hattdsl.rb
 
-#### add method for checking weather to owm_hatts/weather.rb
+#### add method for checking weather to hattdsl/open_weather_map_hattdsl.rb
 
     def weather_for city
       owm.get "/data/2.5/weather?q=#{URI.encode(city)}&APPID=#{appid}"
