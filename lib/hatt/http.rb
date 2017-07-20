@@ -97,7 +97,7 @@ module Hatt
       end
 
 
-      log_request(method, parsed_uri, query_hash, headers, body)
+      log_request(method, parsed_uri, query_hash, req_headers, body)
 
       # doing it this way avoids problem with OPTIONS method: https://github.com/lostisland/faraday/issues/305
       response = nil
