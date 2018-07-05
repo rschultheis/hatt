@@ -204,15 +204,18 @@ module Hatt
     end
 
     def log_response(response, response_obj)
+      log_messages = [
+        'Response Details:',
+        @log_headers ? ['Response Headers:',
+                        response.headers.map { |k, v| "#{k}: #{v.inspect}" }] : nil
+      ]
       if response.headers['content-type'] =~ /json/
-        logger.debug [
-          'Response Details:',
-          @log_headers ? ['Response Headers:',
-                          response.headers.map { |k, v| "#{k}: #{v.inspect}" }] : nil,
+        log_messages += [
           @log_bodies ? ['Response Body:', jsonify(response_obj)] : nil,
           ''
-        ].flatten.compact.join("\n")
+        ]
       end
+      logger.debug log_messages.flatten.compact.join("\n")
     end
 
   end
