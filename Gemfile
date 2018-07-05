@@ -19,7 +19,7 @@ gem 'awesome_print'
 
 group :development do
   gem 'debase'
-  gem 'jeweler'
+  gem 'jeweler', "~> 2"
   gem 'rspec'
   gem 'rubocop'
   gem 'ruby-debug-ide'
